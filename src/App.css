@@ -1,0 +1,54 @@
+* {
+  /* box-sizing: border-box; */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: coral;
+}
+
+#header, #footer {
+  text-align: center;
+}
+
+#game {
+  flex: 1;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0;
+  grid-template-areas: ". . ." ". . ." ". . .";
+  width: 50%;
+  margin: 0 auto;
+}
+
+.box {
+  border: 0.5px solid black;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  background: white;
+  padding: 10px;
+}
+
+.X {
+  content: "O";
+  font-size: 5rem;
+}
+
+.O {
+  content: "O";
+  font-size: 5rem;
+}
+
