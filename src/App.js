@@ -6,27 +6,22 @@ class Grid extends React.Component {
   render() {
     return (
       <div id="grid">
-        <div className="box box0" dataBox={0} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box1" dataBox={1} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box2" dataBox={2} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box3" dataBox={3} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box4" dataBox={4} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box5" dataBox={5} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box6" dataBox={6} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box7" dataBox={7} onClick={this.props.handleClick}>
-        </div>
-        <div className="box box8" dataBox={8} onClick={this.props.handleClick}>
-        </div>
+        {
+          this.props.grid.map((value, index) => {
+            return <Box index={index} handleClick={this.props.handleClick} content={value}/>
+          })
+        }
       </div>
     )
   }
+}
+
+function Box(props) {
+  return (
+    <div className="box" dataBox={props.index} onClick={props.handleClick}>
+      <h1>{props.content}</h1>
+    </div>
+  )
 }
 
 
@@ -37,6 +32,7 @@ class App extends React.Component {
       winningPatterns: {0:[0, 1, 2], 1:[0, 3, 6], 2:[3, 4, 5],
                         3:[1, 4, 7], 4:[6, 7, 8], 5:[2, 5, 8],
                         6:[0, 4, 8], 7:[2, 4, 6]},
+      grid: ['', '', '', '', '', '', '', '', ''],
       currentPlayer: true,
       gameOver: false,
       player1: [],
@@ -51,6 +47,7 @@ class App extends React.Component {
     winningPatterns: {0:[0, 1, 2], 1:[0, 3, 6], 2:[3, 4, 5],
       3:[1, 4, 7], 4:[6, 7, 8], 5:[2, 5, 8],
       6:[0, 4, 8], 7:[2, 4, 6]},
+    grid: ['', '', '', '', '', '', '', '', ''],
     currentPlayer: true,
     gameOver: false,
     player1: [],
@@ -74,29 +71,31 @@ class App extends React.Component {
   }
 
   handleClick(e) {
-    let boxNumber = e.target.getAttribute('dataBox');
+    let boxNumber = Number(e.target.getAttribute('dataBox'));
     let player1Copy, player2Copy;
-    if (this.state.player1.includes(Number(boxNumber)) || this.state.player2.includes(Number(boxNumber))) return;
+    let gridCopy = this.state.grid;
+    if (this.state.player1.includes(boxNumber) || this.state.player2.includes(boxNumber)) return;
     if(this.state.currentPlayer) {
       player1Copy = this.state.player1;
-      e.target.innerHTML = '<h2>X</h2>';
+      gridCopy[boxNumber] = 'X';
       player1Copy.push(Number(boxNumber));
       for (let i=0; i < Object.keys(this.state.winningPatterns).length; ++i) {
         let pattern = this.state.winningPatterns[i];
         let match = player1Copy.filter(element => pattern.includes(element));
         if (this.checkArrayEquality(pattern, match)) {
           this.setState({
-            gameOver: true
+            gameOver: true,
           });
         }
       }
       this.setState({
         player1: player1Copy,
-        currentPlayer: false
+        currentPlayer: false,
+        grid: gridCopy
       });
     } else {
       player2Copy = this.state.player2;
-      e.target.innerHTML = '<h2>O</h2>';
+      gridCopy[boxNumber] = 'O';
       player2Copy.push(Number(boxNumber));
       for (let i=0; i < Object.keys(this.state.winningPatterns).length; ++i) {
         let pattern = this.state.winningPatterns[i];
@@ -109,19 +108,15 @@ class App extends React.Component {
       }
       this.setState({
         player2: player2Copy,
-        currentPlayer: true
+        currentPlayer: true,
+        grid: gridCopy
       });
     }
 
   }
   
   newGame() {
-    let className;
     this.setState(this.initialState);
-    for(let i = 0; i < 9; ++i) {
-      className = "box" + String(i);
-      document.querySelector(className).innerHTML = '';
-    }
   }
 
   render() {
@@ -150,7 +145,7 @@ class App extends React.Component {
       </div>
       
       <div id="game">
-        <Grid handleClick={this.handleClick}/>
+        <Grid handleClick={this.handleClick} grid={this.state.grid}/>
       </div>
       
       <div id="footer">
